@@ -6,6 +6,7 @@ const DataTable = () => {
     let[limit,setLimit] = useState(5)
     let [total,setTotal]  = useState(0)
     let [isPaginated,setIsPaginated] = useState(true)
+    let [arry,setArry] = useState([])
     useEffect(() => {
         let fetchData = async () => {
             let data = await fetch("https://restcountries.com/v3.1/all")
@@ -16,7 +17,18 @@ const DataTable = () => {
         fetchData()     
     }, [])
 
-    // console.log(list,total);
+    useEffect(() => {
+        setArry(list.slice(page,page+limit))
+    },[page,list])
+
+
+   let  sortArea = () => {
+        let data = arry.sort((a,b) => {
+            return   b.area - a.area
+            })
+        console.log(arry,data);
+        setArry(data)
+   }
     
   return (
     <div className='data-table'>
@@ -30,7 +42,7 @@ const DataTable = () => {
         <thead className="fixed">
             <tr>
                 <th></th>
-                <th>Area</th>
+                <th>Area <button onClick={sortArea}>^</button></th>
                 <th>population</th>
                 <th>continents</th>
                 <th>region</th>
@@ -39,7 +51,7 @@ const DataTable = () => {
         </thead>
         <tbody className='table-body'>
             {
-            isPaginated ?   (list.slice(page,page+limit)?.map((item,index) => (
+            isPaginated ?   (arry?.map((item,index) => (
                     <tr key={index}>
                         <td>{index+1}</td>
                       <td>{item?.area}</td>
